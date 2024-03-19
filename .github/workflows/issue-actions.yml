@@ -3,6 +3,8 @@ name: Create Issue Branch
 on:
   issues:
     types: [ assigned ]
+  issue_comment:
+    types: [ created ]
   pull_request:
     types: [ closed ]
 
@@ -14,4 +16,4 @@ jobs:
       - name: Create Issue Branch
         uses: robvanderleek/create-issue-branch@main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
