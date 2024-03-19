@@ -31,17 +31,22 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-    # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
+      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         with:
           gradle-version: '8.5'
+
       - name: Setup Gradle Wrapper
         run: gradle wrapper
+
       - name: Build with Gradle Wrapper
         run: ./gradlew build
+
+      - name: Check current directory
+        run: ls -al
 
   dependency-submission:
     needs: build
@@ -57,6 +62,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+
+      - name: Check current directory info
+        run: ls -al
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+        with:
+          gradle-version: '8.5'
+
+      - name: Setup Gradle Wrapper
+        run: gradle wrapper
 
       # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
       # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
