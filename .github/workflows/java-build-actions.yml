@@ -14,7 +14,7 @@ on:
       - '**.gradle'
     branches:
       - main
-      - 'feature/5**' #todo delete if test is completed
+      - 'feature/5-ci-construction' #todo delete if test is completed
   pull_request:
     branches:
       - main
