@@ -21,7 +21,7 @@ jobs:
     name: Build project
     runs-on: ubuntu-latest
     permissions:
-      content: read
+      contents: read
     steps:
       - uses: actions/checkout@4
       - name: Set up JDK 17
