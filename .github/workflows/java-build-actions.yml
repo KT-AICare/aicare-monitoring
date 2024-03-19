@@ -9,9 +9,6 @@ name: Java build test with gradle
 
 on:
   push:
-    paths:
-      - 'src/**'
-      - '**.gradle'
     branches:
       - main
       - 'feature/5-ci-construction' #todo delete if test is completed
