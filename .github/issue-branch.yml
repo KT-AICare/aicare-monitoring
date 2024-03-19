@@ -1,0 +1,11 @@
+branchName: '${issue.number}-${issue.title,}'
+branches:
+  - label: feature
+    prefix: feature/
+
+gitSafeReplacementChar: '-'
+
+defaultBranch: 'main'
+
+autoLinkIssue: true
+autoCloseIssue: true
