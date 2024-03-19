@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create Issue Branch
+      - name: Create issue branch
+        id: create_issue_branch
         uses: robvanderleek/create-issue-branch@main
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      - name: Echo branch name
+        run: echo ${{ steps.create_issue_branch.outputs.branchName }}
