@@ -82,8 +82,25 @@ jobs:
       - name: Execute server application
         env:
           FILENAME: ${{ needs.build-project.outputs.filename }}
-        run: java -jar build/libs/${{ env.FILENAME }}.jar
-        background: true
+        run:
+          nohup java -jar build/libs/${{ env.FILENAME }}.jar > server-app.log 2>&1 & echo $! > spring-boot-app.pid
+
+      - name: Wait for Application to Start
+        run: |
+          timeout=0
+          until grep -q "Started [a-zA-Z0-9]* in [0-9.]* seconds" spring-boot-app.log; \
+          do
+            echo "Waiting for the application to start..."
+            sleep 5
+            timeout=$((timeout + 5))
+            if [ $timeout -gt 20 ]; then
+              echo "Application failed to start within the time limit."
+              exit 1
+            fi
+          done
+
+      - name: Stop Spring Boot Application
+        run: kill $(cat spring-boot-app.pid) || true
 
   dependency-submission:
     name: Submit dependency graph to github
@@ -145,4 +162,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ PROJECT_NAME }}:${{ BUILD_VERSION }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.BUILD_VERSION }}
