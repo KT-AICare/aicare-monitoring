@@ -163,5 +163,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: JAR_FILE=${{ filename }}
+          build-args: JAR_FILE=${{ env.FILENAME }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.BUILD_VERSION }}
