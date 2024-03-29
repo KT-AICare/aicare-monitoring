@@ -158,8 +158,10 @@ jobs:
         env:
           PROJECT_NAME: ${{ needs.build-project.outputs.project-name }}
           BUILD_VERSION: ${{ needs.build-project.outputs.build-version }}
+          FILENAME: ${{ needs.build-project.outputs.filename }}
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: JAR_FILE=${{ filename }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.BUILD_VERSION }}
