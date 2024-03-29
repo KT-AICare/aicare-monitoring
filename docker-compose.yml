@@ -24,3 +24,76 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     depends_on:
       - prometheus
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2-arm64
+    container_name: am-elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      TZ: Asia/Seoul
+      xpack.security.enabled: false
+      node.name: elasticsearch
+      cluster.name: docker-cluster
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      ELASTIC_PASSWORD: password
+    restart: unless-stopped
+    platform: linux/arm64
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.2-arm64
+    container_name: am-logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - "5044:5044"
+      - "50000:50000/tcp"
+      - "50000:50000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: -Xms512m -Xmx512m
+      node.name: logstash
+      http.host: 0.0.0.0
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    platform: linux/arm64
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.2-arm64
+    container_name: am-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      TZ: Asia/Seoul
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    platform: linux/arm64
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.12.2-arm64
+    container_name: am-filebeat
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+    volumes:
+      - ./config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ${LOGSTASH_PATH}:/aicare/b2g/log
+      - type: bind
+        source: /var/lib/docker/containers
+        target: /var/lib/docker/containers
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    environment:
+      TZ: Asia/Seoul
+    depends_on:
+      - logstash
+    restart: unless-stopped
+    platform: linux/arm64
