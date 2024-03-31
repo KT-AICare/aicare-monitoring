@@ -35,7 +35,7 @@ jobs:
       - name: Build with Gradle Wrapper
         run: |
           gradle wrapper
-          ./gradlew build -x test
+          ./gradlew build test
 
       - name: Extract version and root project name
         id: build-info
@@ -57,54 +57,10 @@ jobs:
           compression-level: 0
           overwrite: true
 
-  execution:
-    name: Execute project
-
-    needs: build-project
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: monitoring-build-result
-          path: ./build/
-
-      - name: Execute server application
-        env:
-          FILENAME: ${{ needs.build-project.outputs.filename }}
-        run:
-          nohup java -jar build/libs/${{ env.FILENAME }}.jar > server-app.log 2>&1 & echo $! > spring-boot-app.pid
-
-      - name: Wait for Application to Start
-        run: |
-          timeout=0
-          until grep -q "Started [a-zA-Z0-9]* in [0-9.]* seconds" server-app.log; \
-          do
-            echo "Waiting for the application to start..."
-            sleep 5
-            timeout=$((timeout + 5))
-            if [ $timeout -gt 20 ]; then
-              echo "Application failed to start within the time limit."
-              exit 1
-            fi
-          done
-
-      - name: Stop Spring Boot Application
-        run: kill $(cat spring-boot-app.pid) || true
-
   dependency-submission:
     name: Submit dependency graph to github
 
+    if: ${{ github.event_name == 'pull_request' }}
     needs: build-project
     runs-on: ubuntu-latest
     permissions:
@@ -128,6 +84,7 @@ jobs:
   docker-image:
     name: Upload docker image to docker hub
 
+    if: ${{ github.event_name == 'pull_request' }}
     needs: build-project
     runs-on: ubuntu-latest
 
