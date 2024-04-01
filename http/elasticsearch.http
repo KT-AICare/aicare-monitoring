@@ -1,0 +1,5 @@
+### index list 상세 조회
+GET http://localhost:9200/_cat/indices?v
+
+### 특정 index의 document list 조회
+GET http://localhost:9200/lamp-2024-04-01/_search
