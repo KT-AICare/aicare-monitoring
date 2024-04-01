@@ -97,3 +97,16 @@ services:
       - logstash
     restart: unless-stopped
     platform: linux/arm64
+
+  spring-boot-app:
+    image: iscon/aicare-monitoring
+    container_name: am-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - server-data:/app
+    environment:
+      TZ: Asia/Seoul
+
+volumes:
+  server-data:
