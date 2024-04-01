@@ -60,7 +60,7 @@ jobs:
   dependency-submission:
     name: Submit dependency graph to github
 
-    if: ${{ github.event_name == 'pull_request' }}
+    if: github.event.pull_request.merged == true
     needs: build-project
     runs-on: ubuntu-latest
     permissions:
@@ -84,7 +84,7 @@ jobs:
   docker-image:
     name: Upload docker image to docker hub
 
-    if: ${{ github.event_name == 'pull_request' }}
+    if: github.event.pull_request.merged == true
     needs: build-project
     runs-on: ubuntu-latest
 
