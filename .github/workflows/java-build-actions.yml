@@ -35,7 +35,7 @@ jobs:
       - name: Build with Gradle Wrapper
         run: |
           gradle wrapper
-          ./gradlew build test
+          ./gradlew build
 
       - name: Extract version and root project name
         id: build-info
