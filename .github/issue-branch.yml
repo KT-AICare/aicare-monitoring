@@ -13,13 +13,3 @@ autoLinkIssue: true
 autoCloseIssue: true
 
 commentMessage: 'Branch ${branchName} created for issue: ${issue.title}'
-
-openDraftPR: true
-copyIssueDescriptionToPR: true
-copyIssueLabelsToPR: true
-copyIssueAssigneeToPR: true
-prSkipCI: true
-conventionalPrTitles: true
-conventionalLabels:
-  '*':
-    '[${branchName}] '
